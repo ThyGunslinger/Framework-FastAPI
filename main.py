@@ -5,11 +5,50 @@ from pydantic import BaseModel
 app = FastAPI()
 
 usuarios = []
+medicos = []
 
 class Usuario(BaseModel):
     id: int
     nombre: str
     email: str
+
+class Medico(BaseModel):
+    id: int
+    nombre: str
+    especialidad: str
+    email: str
+
+@app.post("/medicos")
+def crear_medico(medico: Medico):
+    medicos.append(medico)
+    return {"mensaje": "Médico creado exitosamente", "medico": medico}
+
+@app.get("/medicos")
+def obtener_medicos():
+    return medicos
+
+@app.get("/medicos/{medico_id}")
+def obtener_medico(medico_id: int):
+    for medico in medicos:
+        if medico.id == medico_id:
+            return medico
+    raise HTTPException(status_code=404, detail="Médico no encontrado.")
+
+@app.put("/medicos/{medico_id}")
+def actualizar_medico(medico_id: int, medico_actualizado: Medico):
+    for index, medico in enumerate(medicos):
+        if medico.id == medico_id:
+            medicos[index] = medico_actualizado
+            return {"mensaje": "Médico actualizado exitosamente", "medico": medico_actualizado}
+    raise HTTPException(status_code=404, detail="Médico no encontrado.")
+
+@app.delete("/medicos/{medico_id}")
+def eliminar_medico(medico_id: int):
+    for i, medico in enumerate(medicos):
+        if medico.id == medico_id:
+            medicos.pop(i)
+            return {"mensaje": "Médico eliminado exitosamente"}
+    raise HTTPException(status_code=404, detail="Médico no encontrado.")
 
 @app.post("/usuarios")
 def crear_usuario(usuario: Usuario):
