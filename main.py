@@ -18,6 +18,15 @@ class Medico(BaseModel):
     especialidad: str
     email: str
 
+@app.get("/")
+def inicio():
+    return {
+        "mensaje": "Bienvenido a la API Hospital",
+        "usuarios": "/usuarios",
+        "medicos": "/medicos",
+        "documentacion": "/docs"
+    }
+
 @app.post("/medicos")
 def crear_medico(medico: Medico):
     medicos.append(medico)
